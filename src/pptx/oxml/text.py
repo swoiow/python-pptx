@@ -245,7 +245,9 @@ class CT_TextBodyProperties(BaseOxmlElement):
         return None
 
     @autofit.setter
-    def autofit(self, value: MSO_AUTO_SIZE | None):
+    def autofit(self, value: MSO_AUTO_SIZE | None | int):
+        if isinstance(value, int):
+            value = MSO_AUTO_SIZE.from_value(value)
         if value is not None and value not in MSO_AUTO_SIZE:
             raise ValueError(
                 f"only None or a member of the MSO_AUTO_SIZE enumeration can be assigned to"
