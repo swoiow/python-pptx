@@ -178,6 +178,44 @@ class TextFrame(Subshape):
             p.append_text(p_text)
 
     @property
+    def alignment(self) -> PP_PARAGRAPH_ALIGNMENT | None:
+        """Horizontal alignment of this paragraph.
+
+        The value |None| indicates the paragraph should 'inherit' its effective value from its
+        style hierarchy. Assigning |None| removes any explicit setting, causing its inherited
+        value to be used.
+        """
+        return self._txBody.lstStyle.lv1bPr.algn
+
+    @alignment.setter
+    def alignment(self, value: PP_PARAGRAPH_ALIGNMENT | None):
+        self._txBody.lstStyle.lv1bPr.algn = value
+
+    @property
+    def level(self) -> int:
+        """Indentation level of this paragraph.
+
+        Read-write. Integer in range 0..8 inclusive. 0 represents a top-level paragraph and is the
+        default value. Indentation level is most commonly encountered in a bulleted list, as is
+        found on a word bullet slide.
+        """
+        return self._txBody.lstStyle.lv1bPr.lvl
+
+    @level.setter
+    def level(self, level: int):
+        self._txBody.lstStyle.lv1bPr.lvl = level
+
+    @property
+    def font(self) -> Font:
+        """|Font| object containing default character properties for the runs in this paragraph.
+
+        These character properties override default properties inherited from parent objects such
+        as the text frame the paragraph is contained in and they may be overridden by character
+        properties set at the run level.
+        """
+        return Font(self._defRPr)
+
+    @property
     def vertical_anchor(self) -> MSO_VERTICAL_ANCHOR | None:
         """Represents the vertical alignment of text in this text frame.
 
@@ -275,6 +313,18 @@ class TextFrame(Subshape):
         txBody = self._element
         for rPr in iter_rPrs(txBody):
             set_rPr_font(rPr, family, size, bold, italic)
+
+    @property
+    def _lv1bPr(self) -> CT_TextParagraphProperties:
+        return self._txBody.lstStyle.get_or_add_lv1bPr()
+
+    @property
+    def _defRPr(self) -> CT_TextCharacterProperties:
+        """The element that defines the default run properties for runs in this paragraph.
+
+        Causes the element to be added if not present.
+        """
+        return self._lv1bPr.get_or_add_defRPr()
 
 
 class Font(object):

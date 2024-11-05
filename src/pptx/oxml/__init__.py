@@ -459,6 +459,7 @@ from pptx.oxml.text import (  # noqa: E402
     CT_TextSpacingPoint,
     CT_TextCharBullet,
     CT_TextNoBullet,
+    CT_ListStyle,
 )
 
 register_element_cls("a:bodyPr", CT_TextBodyProperties)
@@ -483,6 +484,8 @@ register_element_cls("a:buChar", CT_TextCharBullet)
 register_element_cls("a:txBody", CT_TextBody)
 register_element_cls("c:txPr", CT_TextBody)
 register_element_cls("p:txBody", CT_TextBody)
+register_element_cls("a:lstStyle", CT_ListStyle)
+register_element_cls("a:lvl1pPr", CT_TextParagraphProperties)
 
 
 from pptx.oxml.theme import CT_OfficeStyleSheet  # noqa: E402

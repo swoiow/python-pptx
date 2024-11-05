@@ -76,6 +76,12 @@ class CT_RegularTextRun(BaseOxmlElement):
         """
         return re.sub(r"([\x00-\x08\x0B-\x1F])", lambda match: "_x%04X_" % ord(match.group(1)), s)
 
+class CT_ListStyle(BaseOxmlElement):
+    """`a:lstStyle` custom element class."""
+    get_or_add_lv1bPr: Callable[[], CT_TextParagraphProperties]
+    lv1bPr: CT_TextParagraphProperties = ZeroOrOne(  # pyright: ignore[reportAssignmentType]
+        "a:lvl1pPr"
+    )
 
 class CT_TextBody(BaseOxmlElement):
     """`p:txBody` custom element class.
@@ -88,6 +94,9 @@ class CT_TextBody(BaseOxmlElement):
 
     bodyPr: CT_TextBodyProperties = OneAndOnlyOne(  # pyright: ignore[reportAssignmentType]
         "a:bodyPr"
+    )
+    lstStyle: CT_ListStyle = OneAndOnlyOne(  # pyright: ignore[reportAssignmentType]
+        "a:lstStyle"
     )
     p: CT_TextParagraph = OneOrMore("a:p")  # pyright: ignore[reportAssignmentType]
 
