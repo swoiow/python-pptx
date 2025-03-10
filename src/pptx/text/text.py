@@ -353,14 +353,9 @@ class Font(object):
         self._rPr.b = value
 
     @lazyproperty
-    def color(self) -> ColorFormat:
+    def color(self) -> str|None:
         """The |ColorFormat| instance that provides access to the color settings for this font."""
-        if self.fill.type != MSO_FILL.SOLID:
-            self.fill.solid()
-        try:
-            return str(self.fill.fore_color.rgb)
-        except:
-            return None
+        return self.fill.value
 
     @lazyproperty
     def fill(self) -> FillFormat:

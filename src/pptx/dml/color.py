@@ -106,6 +106,16 @@ class ColorFormat(object):
             )
             raise ValueError(msg)
 
+    @property
+    def value(self):
+        if self.type == MSO_COLOR_TYPE.RGB:
+            return str(self.rgb)
+        elif self.type == MSO_COLOR_TYPE.SCHEME:
+            return "ThemeColor-" + str(self.theme_color)
+        elif self.type is None:
+            return None
+        return str(self.type).split()[0]
+
 
 class _Color(object):
     """

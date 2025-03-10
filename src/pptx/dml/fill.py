@@ -160,6 +160,28 @@ class FillFormat(object):
         """The type of this fill, e.g. `MSO_FILL_TYPE.SOLID`."""
         return self._fill.type
 
+    @property
+    def value(self):
+        """Return a value appropriate to the fill type.
+
+        For solid fills, returns the foreground color.
+        For pattern fills, returns the pattern type.
+        For gradient fills, returns the gradient stops.
+        For picture fills, returns "Picture".
+        For group fills, returns "Group".
+        For background (no fill), returns "Background".
+        Returns None if no fill is applied.
+        """
+        if self.type == MSO_FILL.SOLID:
+            return self.fore_color.value
+        elif self.type == MSO_FILL.PATTERNED or self.type == MSO_FILL.TEXTURED:
+            return "Texture"
+        elif self.type == MSO_FILL.GRADIENT:
+            return "GradientColor"
+        elif self.type == MSO_FILL.PICTURE:
+            return "Picture"
+        return None
+
 
 class _Fill(object):
     """

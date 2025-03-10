@@ -25,7 +25,7 @@ from pptx.parts.slide import (
 if TYPE_CHECKING:
     from pptx.opc.package import Part
 
-__version__ = "1.0.2+PPTAgent"
+__version__ = "1.0.3+PPTAgent"
 
 sys.modules["pptx.exceptions"] = exceptions
 del sys
