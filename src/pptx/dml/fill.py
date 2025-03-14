@@ -233,11 +233,23 @@ class _Fill(object):
             f".type property must be implemented on {self.__class__.__name__}"
         )
 
+    @property
+    def rId(self):
+        raise NotImplementedError(
+            f".rId property must be implemented on {self.__class__.__name__}"
+        )
 
 class _BlipFill(_Fill):
+    def __init__(self, blipFill: CT_BlipFillProperties):
+        self._blipFill = blipFill
+
     @property
     def type(self):
         return MSO_FILL.PICTURE
+
+    @property
+    def rId(self):
+        return self._blipFill.blip.rEmbed
 
 
 class _GradFill(_Fill):
