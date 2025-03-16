@@ -70,6 +70,14 @@ class FillFormat(object):
         """
         return self._fill.fore_color
 
+    @property
+    def rId(self):
+        return self._fill.rId
+
+    @rId.setter
+    def rId(self, value):
+        self._fill.rId = value
+
     def gradient(self):
         """Sets the fill type to gradient.
 
@@ -155,6 +163,16 @@ class FillFormat(object):
         solidFill = self._xPr.get_or_change_to_solidFill()
         self._fill = _SolidFill(solidFill)
 
+    def blip(self):
+        """
+        Sets the fill type to blip, i.e. an image. Note that calling
+        this method does not set an image or by itself cause the shape to
+        appear with an image fill; rather it enables subsequent
+        assignments to properties like rId to set the image.
+        """
+        blipFill = self._xPr.get_or_change_to_blipFill()
+        self._fill = _BlipFill(blipFill)
+
     @property
     def type(self) -> MSO_FILL_TYPE:
         """The type of this fill, e.g. `MSO_FILL_TYPE.SOLID`."""
@@ -179,7 +197,7 @@ class FillFormat(object):
         elif self.type == MSO_FILL.GRADIENT:
             return "GradientColor"
         elif self.type == MSO_FILL.PICTURE:
-            return "Picture"
+            return "Picture:rId" + str(self._fill.rId)
         return None
 
 
@@ -235,9 +253,8 @@ class _Fill(object):
 
     @property
     def rId(self):
-        raise NotImplementedError(
-            f".rId property must be implemented on {self.__class__.__name__}"
-        )
+        raise NotImplementedError(f".rId property must be implemented on {self.__class__.__name__}")
+
 
 class _BlipFill(_Fill):
     def __init__(self, blipFill: CT_BlipFillProperties):
@@ -249,7 +266,14 @@ class _BlipFill(_Fill):
 
     @property
     def rId(self):
+        if not hasattr(self._blipFill, "blip") or self._blipFill.blip is None:
+            return None
         return self._blipFill.blip.rEmbed
+
+    @rId.setter
+    def rId(self, value):
+        blip = self._blipFill.get_or_add_blip()
+        blip.rEmbed = value
 
 
 class _GradFill(_Fill):
