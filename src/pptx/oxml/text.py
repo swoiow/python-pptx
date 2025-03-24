@@ -25,6 +25,7 @@ from pptx.oxml.simpletypes import (
     ST_TextSpacingPoint,
     ST_TextTypeface,
     ST_TextWrappingType,
+    ST_TextFontStrike,
     XsdBoolean,
     XsdString,
 )
@@ -336,6 +337,9 @@ class CT_TextCharacterProperties(BaseOxmlElement):
     i: bool | None = OptionalAttribute("i", XsdBoolean)  # pyright: ignore[reportAssignmentType]
     u: MSO_TEXT_UNDERLINE_TYPE | None = OptionalAttribute(  # pyright: ignore[reportAssignmentType]
         "u", MSO_TEXT_UNDERLINE_TYPE
+    )
+    strike: ST_TextFontStrike | None = OptionalAttribute(  # pyright: ignore[reportAssignmentType]
+        "strike", ST_TextFontStrike
     )
 
     def _new_gradFill(self):
