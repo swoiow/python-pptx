@@ -488,23 +488,29 @@ class Font(object):
             value = MSO_UNDERLINE.NONE
         self._element.u = value
 
-    def get_attrs(self):
-        return (
-            self.bold,
-            self.color,
-            self.italic,
-            self.name,
-            self.size.pt if self.size is not None else None,
-            self.underline,
-        )
+    def get_attrs(self) -> dict:
+        """Return a dictionary of font attributes.
+        
+        Returns:
+            dict: Font attributes including bold, color, italic, name, size (in points), and underline.
+        """
+        return {
+            'bold': self.bold,
+            'strikethrough': self.strikethrough,
+            'color': self.color,
+            'italic': self.italic,
+            'name': self.name,
+            'size': self.size.pt if self.size is not None else None,
+            'underline': self.underline,
+        }
 
     def __hash__(self):
-        return hash(self.get_attrs())
+        return hash(tuple(self.get_attrs().values))
 
     def __eq__(self, other):
         if not isinstance(other, Font):
             return False
-        return self.get_attrs() == other.get_attrs()
+        return self.__hash__() == other.__hash__()
 
     def __repr__(self):
         return f"Font: name={self.name}, size={self.size}"
