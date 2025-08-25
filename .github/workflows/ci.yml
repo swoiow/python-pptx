@@ -40,3 +40,40 @@ jobs:
           name: wheel-${{ matrix.os }}-py${{ matrix.python-version }}
           path: dist/*.whl
           retention-days: 2
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download all wheels
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+
+      - name: Generate release notes chunk
+        run: |
+          {
+            echo "### Build #${{ github.run_number }} ($(date -u +'%Y-%m-%d %H:%M:%S') UTC)"
+            echo
+            git log -1 --pretty=format:'- %h %s%n%b'
+            echo
+          } > release_body_chunk.md
+
+      - name: Create or update 'latest-whl' Release
+        uses: softprops/action-gh-release@v2
+        with:
+          token: ${{ github.token }}   # 使用内置 GITHUB_TOKEN
+          tag_name: latest-whl
+          name: latest-whl
+          draft: false
+          prerelease: true
+          make_latest: true
+          body_path: release_body_chunk.md
+          append_body: true
+          overwrite: true
+          files: |
+            dist/**/**/*.whl
