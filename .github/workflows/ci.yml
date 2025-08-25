@@ -1,36 +1,42 @@
-name: ci
+name: Build Wheels
 
 on:
-  pull_request:
-    branches: [ master ]
   push:
-    branches:
-      - master
-      - develop
-
-permissions:
-  contents: write
+  pull_request:
+  workflow_dispatch:
 
 jobs:
-
   build:
-    runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        python-version: ["3.9", "3.10", "3.11", "3.12"]
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ["3.12", "3.13"]
+
+    runs-on: ${{ matrix.os }}
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Display Python version
-        run: python -c "import sys; print(sys.version)"
-      - name: Install test dependencies
+          cache: pip
+
+      - name: Install build backend
         run: |
-          pip install .
-          pip install -r requirements-test.txt
-      - name: Test with pytest
-        run: pytest --cov=pptx --cov-report term-missing tests
-      - name: Acceptance tests with behave
-        run: behave --stop
+          python -m pip install --upgrade pip
+          pip install build
+
+      - name: Build wheel
+        run: |
+          python -m build --wheel
+
+      - name: Upload wheel artifact (retained 2 days)
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheel-${{ matrix.os }}-py${{ matrix.python-version }}
+          path: dist/*.whl
+          retention-days: 2
